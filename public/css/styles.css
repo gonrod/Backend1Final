@@ -1,0 +1,244 @@
+/* General Styles */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f0f0f0;
+}
+
+h1 {
+    color: #333;
+    text-align: center;
+    padding: 20px 0;
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+li {
+    background-color: #fff;
+    margin: 10px 0;
+    padding: 10px 16px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+li img {
+    max-width: 50px;
+    border-radius: 5px;
+}
+
+a {
+    text-decoration: none;
+    color: #4E3FCE; /* Color morado suave para los enlaces */
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* Navigation Bar */
+nav {
+    background-color: #F9F9FB; /* Fondo blanco sutil */
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05); /* Sombra suave */
+    border-radius: 8px;
+}
+
+nav .logo {
+    color: #4E3FCE; /* Letra morado suave */
+    font-size: 1.5rem;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+}
+
+nav .menu {
+    display: flex;
+    gap: 20px;
+    list-style: none;
+}
+
+nav .menu li a {
+    color: #4E3FCE; /* Cambiar el color de los enlaces a morado suave */
+    font-weight: bold;
+    font-size: 1rem;
+    transition: color 0.3s ease;
+}
+
+nav .menu li a:hover {
+    color: #6A5ACD; /* Color más claro al hacer hover */
+}
+
+.cart-icon {
+    position: relative;
+    cursor: pointer;
+}
+
+.cart-icon img {
+    width: 25px; /* Tamaño más pequeño del carrito */
+    filter: invert(50%) sepia(20%) saturate(1000%) hue-rotate(240deg); /* Ajustar color del ícono a morado suave */
+}
+
+.cart-count {
+    background-color: #4E3FCE; /* Fondo del círculo morado */
+    border-radius: 50%;
+    color: white; /* Texto blanco en el contador */
+    padding: 5px 8px;
+    font-size: 12px;
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
+
+button {
+    background-color: #4E3FCE;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #6A5ACD;
+}
+
+#productList {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px; 
+    padding: 20px;
+    margin: 0 auto;
+    width: 90%;
+    max-width: 1200px; 
+}
+
+#productList li {
+    display: flex;
+    justify-content: space-between;
+}
+
+.product-item {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 15px;
+    border-radius: 8px;
+    background-color: #fff;
+    margin-bottom: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+}
+
+.product-title {
+    font-weight: bold;
+    font-size: 1.2rem;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.product-price {
+    font-size: 1rem;
+    color: #4E3FCE; 
+    margin-bottom: 5px;
+}
+
+
+.product-description {
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 10px;
+}
+
+.product-delete-btn {
+    background-color: #FF4E4E; 
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.product-delete-btn:hover {
+    background-color: #FF3333; 
+}
+
+
+#productForm {
+    margin: 20px auto;
+    text-align: center;
+}
+
+#productForm input {
+    margin: 5px;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    width: 200px;
+}
+
+#productForm button {
+    margin-top: 10px;
+}
+
+.simple.productList {
+    list-style-type: none; /* Eliminar los puntos de la lista */
+    padding: 0;
+    margin: 20px auto;
+    width: 90%;
+    max-width: 1000px; /* Limitar el ancho máximo */
+}
+
+/* Ajustar .product-item para usar flex y centrar los elementos */
+.simple .product-item {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    padding: 15px 20px;
+    margin-bottom: 15px;
+    display: flex;
+
+}
+
+/* Flexbox para el contenido de cada producto en una sola línea */
+.simple .product-info {
+    display: flex;
+    flex-direction: row; /* Colocar los elementos en una fila */
+    align-items: center; /* Centrarlos verticalmente */
+    justify-content: flex-start; /* Alinear el contenido al inicio horizontalmente */
+    gap: 10px; /* Añadir espacio entre los elementos */
+}
+
+/* Estilo para el título del producto */
+.simple .product-title {
+    font-size: 1.4rem;
+    color: #333;
+
+}
+
+/* Estilo para el precio del producto */
+.simple .product-price {
+    font-size: 1.1rem;
+    color: #4E3FCE; /* Color destacado para el precio */
+
+}
+
+/* Estilo para la descripción del producto */
+.simple .product-description {
+    font-size: 1rem;
+    color: #666;
+    
+}

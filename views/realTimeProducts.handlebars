@@ -1,0 +1,95 @@
+<h1>Productos en Tiempo Real</h1>
+
+<ul id="productList"></ul>
+
+<!-- Formulario para agregar un nuevo producto -->
+<div id="productForm">
+    <h2>Agregar un Nuevo Producto</h2>
+    <input type="text" id="title" placeholder="Título del producto" required>
+    <input type="text" id="description" placeholder="Descripción" required>
+    <input type="text" id="code" placeholder="Código" required>
+    <input type="number" id="price" placeholder="Precio" required>
+    <input type="number" id="stock" placeholder="Stock" required>
+    <input type="text" id="category" placeholder="Categoría" required>
+    <button onclick="addProduct()">Agregar Producto</button>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    const socket = io();
+
+    // Función para mostrar la lista de productos
+    socket.on('productList', (products) => {
+        const productList = document.getElementById('productList');
+        productList.innerHTML = ''; // Limpiar la lista
+
+        products.forEach(product => {
+            const li = document.createElement('li');
+            li.classList.add('product-item'); // Añadir clase para el estilo del producto
+
+            // Título del producto
+            const titleDiv = document.createElement('div');
+            titleDiv.classList.add('product-title');
+            titleDiv.textContent = product.title;
+
+            // Precio del producto
+            const priceDiv = document.createElement('div');
+            priceDiv.classList.add('product-price');
+            priceDiv.textContent = `Precio: $${product.price}`;
+
+            // Contenedor de la descripción
+            const descriptionDiv = document.createElement('div');
+            descriptionDiv.classList.add('product-description');
+            descriptionDiv.textContent = product.description;
+
+            // Botón para eliminar el producto
+            const deleteButton = document.createElement('button');
+            deleteButton.textContent = 'Eliminar';
+            deleteButton.classList.add('product-delete-btn'); // Añadir clase para el botón
+            deleteButton.onclick = () => deleteProduct(product.id); // Asignar evento de eliminación
+
+            // Agregar los elementos al li
+            li.appendChild(titleDiv);
+            li.appendChild(priceDiv);
+            li.appendChild(descriptionDiv);
+            li.appendChild(deleteButton);
+            productList.appendChild(li);
+        });
+    });
+
+    // Función para agregar un nuevo producto
+    function addProduct() {
+        const title = document.getElementById('title').value;
+        const description = document.getElementById('description').value;
+        const code = document.getElementById('code').value;
+        const price = document.getElementById('price').value;
+        const stock = document.getElementById('stock').value;
+        const category = document.getElementById('category').value;
+
+        if (title && description && code && price && stock && category) {
+            socket.emit('newProduct', {
+                title,
+                description,
+                code,
+                price: parseFloat(price),
+                stock: parseInt(stock),
+                category
+            });
+
+            // Limpiar el formulario
+            document.getElementById('title').value = '';
+            document.getElementById('description').value = '';
+            document.getElementById('code').value = '';
+            document.getElementById('price').value = '';
+            document.getElementById('stock').value = '';
+            document.getElementById('category').value = '';
+        } else {
+            alert("Por favor, completa todos los campos.");
+        }
+    }
+
+    // Función para eliminar un producto
+    function deleteProduct(productId) {
+        socket.emit('deleteProduct', productId);
+    }
+</script>

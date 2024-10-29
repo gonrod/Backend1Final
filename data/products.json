@@ -1,0 +1,35 @@
+[
+  {
+    "id": 3,
+    "title": "Producto C",
+    "description": "Descripción del Producto C",
+    "code": "GHI789",
+    "price": 300,
+    "status": true,
+    "stock": 5,
+    "category": "Categoría C",
+    "thumbnails": []
+  },
+  {
+    "id": 4,
+    "title": "Nuevo Producto",
+    "description": "Descripción del nuevo producto",
+    "code": "NEW123",
+    "price": 250,
+    "status": true,
+    "stock": 50,
+    "category": "Categoría Nueva",
+    "thumbnails": [
+      "ruta/nueva_imagen1.png",
+      "ruta/nueva_imagen2.png"
+    ]
+  },
+  {
+    "title": "Testing",
+    "description": "un test",
+    "code": "123435",
+    "price": 123,
+    "stock": 4,
+    "category": "Test"
+  }
+]
