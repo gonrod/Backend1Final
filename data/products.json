@@ -20,8 +20,7 @@
     "stock": 50,
     "category": "Categoría Nueva",
     "thumbnails": [
-      "ruta/nueva_imagen1.png",
-      "ruta/nueva_imagen2.png"
+      "ruta/nueva_imagen1.png"
     ]
   },
   {

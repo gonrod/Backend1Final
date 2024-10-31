@@ -1,112 +1,74 @@
-const fs = require('fs');
-const path = require('path');
-const cartsFilePath = path.join(__dirname, '../../data/carts.json');
+const Cart = require('../models/Cart');
+
+// Función auxiliar para encontrar un carrito
+const findCartById = async (id, res) => {
+  const cart = await Cart.findById(id).populate('products.product');
+  if (!cart) {
+    return res.status(404).json({ error: 'Carrito no encontrado' });
+  }
+  return cart;
+};
 
 // Crear un nuevo carrito
-const createCart = (req, res) => {
-    fs.readFile(cartsFilePath, 'utf-8', (err, data) => {
-        if (err) {
-            return res.status(500).json({ error: 'Failed to read carts file' });
-        }
-        let carts = JSON.parse(data);
-        const newCart = {
-            id: carts.length > 0 ? carts[carts.length - 1].id + 1 : 1,
-            products: []
-        };
-        carts.push(newCart);
-
-        fs.writeFile(cartsFilePath, JSON.stringify(carts, null, 2), (err) => {
-            if (err) {
-                return res.status(500).json({ error: 'Failed to create cart' });
-            }
-            res.status(201).json(newCart);
-        });
-    });
+const createCart = async (req, res) => {
+  try {
+    const newCart = new Cart({ products: [] });
+    await newCart.save();
+    res.status(201).json(newCart);
+  } catch (error) {
+    res.status(500).json({ error: 'Error al crear el carrito' });
+  }
 };
 
 // Obtener un carrito por su ID
-const getCartById = (req, res) => {
-    fs.readFile(cartsFilePath, 'utf-8', (err, data) => {
-        if (err) {
-            return res.status(500).json({ error: 'Failed to read carts file' });
-        }
-        const carts = JSON.parse(data);
-        const cart = carts.find(c => c.id === parseInt(req.params.cid));
-        if (!cart) {
-            return res.status(404).json({ error: 'Cart not found' });
-        }
-        res.json(cart);
-    });
+const getCartById = async (req, res) => {
+  try {
+    const cart = await findCartById(req.params.cid, res);
+    if (cart) res.json(cart);
+  } catch (error) {
+    res.status(500).json({ error: 'Error al obtener el carrito' });
+  }
 };
 
 // Agregar un producto a un carrito
-const addProductToCart = (req, res) => {
-    const { cid, pid } = req.params;
+const addProductToCart = async (req, res) => {
+  const { cid, pid } = req.params;
+  try {
+    const cart = await findCartById(cid, res);
+    if (!cart) return;
 
-    fs.readFile(cartsFilePath, 'utf-8', (err, data) => {
-        if (err) {
-            return res.status(500).json({ error: 'Failed to read carts file' });
-        }
-        let carts = JSON.parse(data);
-        const cart = carts.find(c => c.id === parseInt(cid));
+    const productIndex = cart.products.findIndex(p => p.product.toString() === pid);
+    if (productIndex !== -1) {
+      cart.products[productIndex].quantity++;
+    } else {
+      cart.products.push({ product: pid, quantity: 1 });
+    }
 
-        if (!cart) {
-            return res.status(404).json({ error: 'Cart not found' });
-        }
-
-        const productIndex = cart.products.findIndex(p => p.product === parseInt(pid));
-
-        if (productIndex !== -1) {
-            cart.products[productIndex].quantity += 1;
-        } else {
-            cart.products.push({ product: parseInt(pid), quantity: 1 });
-        }
-
-        fs.writeFile(cartsFilePath, JSON.stringify(carts, null, 2), (err) => {
-            if (err) {
-                return res.status(500).json({ error: 'Failed to update cart' });
-            }
-            res.status(201).json(cart);
-        });
-    });
+    await cart.save();
+    res.status(201).json(cart);
+  } catch (error) {
+    res.status(500).json({ error: 'Error al agregar producto al carrito' });
+  }
 };
 
 // Eliminar un producto de un carrito
-const removeProductFromCart = (req, res) => {
-    const { cid, pid } = req.params;
+const removeProductFromCart = async (req, res) => {
+  const { cid, pid } = req.params;
+  try {
+    const cart = await findCartById(cid, res);
+    if (!cart) return;
 
-    fs.readFile(cartsFilePath, 'utf-8', (err, data) => {
-        if (err) {
-            return res.status(500).json({ error: 'Failed to read carts file' });
-        }
-        let carts = JSON.parse(data);
-        const cart = carts.find(c => c.id === parseInt(cid));
-
-        if (!cart) {
-            return res.status(404).json({ error: 'Cart not found' });
-        }
-
-        const productIndex = cart.products.findIndex(p => p.product === parseInt(pid));
-
-        if (productIndex === -1) {
-            return res.status(404).json({ error: 'Product not found in cart' });
-        }
-
-        // Eliminar el producto del carrito
-        cart.products.splice(productIndex, 1);
-
-        fs.writeFile(cartsFilePath, JSON.stringify(carts, null, 2), (err) => {
-            if (err) {
-                return res.status(500).json({ error: 'Failed to update cart' });
-            }
-            res.status(204).send(); // No Content
-        });
-    });
+    cart.products = cart.products.filter(p => p.product.toString() !== pid);
+    await cart.save();
+    res.status(204).send();
+  } catch (error) {
+    res.status(500).json({ error: 'Error al eliminar producto del carrito' });
+  }
 };
 
 module.exports = {
-    createCart,
-    getCartById,
-    addProductToCart,
-    removeProductFromCart
+  createCart,
+  getCartById,
+  addProductToCart,
+  removeProductFromCart
 };

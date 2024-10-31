@@ -36,7 +36,7 @@ li img {
 
 a {
     text-decoration: none;
-    color: #4E3FCE; /* Color morado suave para los enlaces */
+    color: #4E3FCE;
 }
 
 a:hover {
@@ -45,17 +45,17 @@ a:hover {
 
 /* Navigation Bar */
 nav {
-    background-color: #F9F9FB; /* Fondo blanco sutil */
+    background-color: #F9F9FB;
     padding: 15px 20px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05); /* Sombra suave */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
     border-radius: 8px;
 }
 
 nav .logo {
-    color: #4E3FCE; /* Letra morado suave */
+    color: #4E3FCE;
     font-size: 1.5rem;
     font-weight: bold;
     display: flex;
@@ -69,14 +69,14 @@ nav .menu {
 }
 
 nav .menu li a {
-    color: #4E3FCE; /* Cambiar el color de los enlaces a morado suave */
+    color: #4E3FCE;
     font-weight: bold;
     font-size: 1rem;
     transition: color 0.3s ease;
 }
 
 nav .menu li a:hover {
-    color: #6A5ACD; /* Color más claro al hacer hover */
+    color: #6A5ACD;
 }
 
 .cart-icon {
@@ -85,14 +85,14 @@ nav .menu li a:hover {
 }
 
 .cart-icon img {
-    width: 25px; /* Tamaño más pequeño del carrito */
-    filter: invert(50%) sepia(20%) saturate(1000%) hue-rotate(240deg); /* Ajustar color del ícono a morado suave */
+    width: 25px;
+    filter: invert(50%) sepia(20%) saturate(1000%) hue-rotate(240deg);
 }
 
 .cart-count {
-    background-color: #4E3FCE; /* Fondo del círculo morado */
+    background-color: #4E3FCE;
     border-radius: 50%;
-    color: white; /* Texto blanco en el contador */
+    color: white;
     padding: 5px 8px;
     font-size: 12px;
     position: absolute;
@@ -120,16 +120,11 @@ button:hover {
 #productList {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 20px; 
+    gap: 20px;
     padding: 20px;
     margin: 0 auto;
     width: 90%;
-    max-width: 1200px; 
-}
-
-#productList li {
-    display: flex;
-    justify-content: space-between;
+    max-width: 1200px;
 }
 
 .product-item {
@@ -139,7 +134,6 @@ button:hover {
     padding: 15px;
     border-radius: 8px;
     background-color: #fff;
-    margin-bottom: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
 }
 
@@ -152,10 +146,9 @@ button:hover {
 
 .product-price {
     font-size: 1rem;
-    color: #4E3FCE; 
+    color: #4E3FCE;
     margin-bottom: 5px;
 }
-
 
 .product-description {
     font-size: 0.9rem;
@@ -164,7 +157,7 @@ button:hover {
 }
 
 .product-delete-btn {
-    background-color: #FF4E4E; 
+    background-color: #FF4E4E;
     color: white;
     border: none;
     padding: 8px 12px;
@@ -173,72 +166,111 @@ button:hover {
 }
 
 .product-delete-btn:hover {
-    background-color: #FF3333; 
+    background-color: #FF3333;
 }
 
-
-#productForm {
+/* Styles for the Filter Form */
+#filterForm {
+    background-color: #ffffff;
+    padding: 20px;
     margin: 20px auto;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+label {
+    font-size: 14px;
+    margin-bottom: 5px;
+    color: #666;
+}
+
+input, select, button, .btn-filter {
+    padding: 8px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.btn-filter {
+    background-color: #5e72e4;
+    color: #fff;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.btn-filter:hover {
+    background-color: #4953b8;
+}
+
+/* Styles for Product Form */
+#productForm {
+    background-color: #ffffff;
+    padding: 20px;
+    margin: 20px auto;
+
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: space-around;
     text-align: center;
 }
 
-#productForm input {
-    margin: 5px;
-    padding: 10px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-    width: 200px;
+.product-group input, .product-group select, .btn-add {
+    padding: 8px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
 }
 
-#productForm button {
-    margin-top: 10px;
+.btn-add {
+    background-color: #6c757d;
+    color: #fff;
+    cursor: pointer;
+    transition: background-color 0.3s;
 }
 
-.simple.productList {
-    list-style-type: none; /* Eliminar los puntos de la lista */
-    padding: 0;
-    margin: 20px auto;
-    width: 90%;
-    max-width: 1000px; /* Limitar el ancho máximo */
+.btn-add:hover {
+    background-color: #5a6268;
 }
 
-/* Ajustar .product-item para usar flex y centrar los elementos */
-.simple .product-item {
+
+/* Dropdown Styling */
+#category {
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
     background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    padding: 15px 20px;
-    margin-bottom: 15px;
-    display: flex;
-
-}
-
-/* Flexbox para el contenido de cada producto en una sola línea */
-.simple .product-info {
-    display: flex;
-    flex-direction: row; /* Colocar los elementos en una fila */
-    align-items: center; /* Centrarlos verticalmente */
-    justify-content: flex-start; /* Alinear el contenido al inicio horizontalmente */
-    gap: 10px; /* Añadir espacio entre los elementos */
-}
-
-/* Estilo para el título del producto */
-.simple .product-title {
-    font-size: 1.4rem;
     color: #333;
-
+    width: 100%;
+    max-width: 200px;
+    box-sizing: border-box;
+    cursor: pointer;
+    transition: border-color 0.3s ease;
 }
 
-/* Estilo para el precio del producto */
-.simple .product-price {
-    font-size: 1.1rem;
-    color: #4E3FCE; /* Color destacado para el precio */
-
+#category:hover {
+    border-color: #aaa;
 }
 
-/* Estilo para la descripción del producto */
-.simple .product-description {
-    font-size: 1rem;
-    color: #666;
-    
+#category:focus {
+    outline: none;
+    border-color: #666;
+}
+
+#testButtons {
+    margin: auto;
+    width: max-content;
 }

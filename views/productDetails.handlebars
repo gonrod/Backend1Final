@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{product.title}}</title>
+</head>
+<body>
+    <h1>{{product.title}}</h1>
+    <p>Precio: ${{product.price}}</p>
+    <p>Descripción: {{product.description}}</p>
+    <p>Categoría: {{product.category}}</p>
+    <p>Stock: {{product.stock}}</p>
+    <button onclick="agregarAlCarrito('{{product._id}}')">Agregar al Carrito</button>
+
+    <script>
+        function agregarAlCarrito(productId) {
+            // Aquí puedes agregar la lógica para agregar el producto al carrito
+            alert('Producto agregado al carrito: ' + productId);
+        }
+    </script>
+</body>
+</html>

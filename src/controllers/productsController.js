@@ -1,126 +1,126 @@
-const fs = require('fs');
-const path = require('path');
-const productsFilePath = path.join(__dirname, '../../data/products.json');
+const Product = require('../models/Product');
 
-// Obtener todos los productos
-const getProducts = (req, res) => {
-    fs.readFile(productsFilePath, 'utf-8', (err, data) => {
-        if (err) {
-            return res.status(500).json({ error: 'Failed to read products file' });
-        }
-        let products = JSON.parse(data);
-        if (req.query.limit) {
-            products = products.slice(0, parseInt(req.query.limit));
-        }
-        res.json(products);
-    });
+// Función auxiliar para obtener los productos con filtros y paginación
+const getFilteredProducts = async ({ limit, page, sort, query }) => {
+  const filter = query ? { category: query } : {};
+  const sortOption = sort === 'asc' ? { price: 1 } : sort === 'desc' ? { price: -1 } : {};
+
+  const limitNum = parseInt(limit, 10) || 10;
+  const pageNum = parseInt(page, 10) || 1;
+
+  const products = await Product.find(filter)
+    .sort(sortOption)
+    .skip((pageNum - 1) * limitNum)
+    .limit(limitNum);
+
+  const totalProducts = await Product.countDocuments(filter);
+  const totalPages = Math.ceil(totalProducts / limitNum);
+
+  return { products, totalPages, pageNum, limitNum };
 };
 
-// Obtener un producto por su ID
-const getProductById = (req, res) => {
-    fs.readFile(productsFilePath, 'utf-8', (err, data) => {
-        if (err) {
-            return res.status(500).json({ error: 'Failed to read products file' });
-        }
-        const products = JSON.parse(data);
-        const product = products.find(p => p.id === parseInt(req.params.pid));
+// Obtener productos con paginación, filtros y ordenamiento
+const getProducts = async (req, res) => {
+  try {
+    const { limit, page, sort, query } = req.query;
+    const { products, totalPages, pageNum } = await getFilteredProducts({ limit, page, sort, query });
+
+    res.json({
+      status: "success",
+      payload: products,
+      totalPages,
+      prevPage: pageNum > 1 ? pageNum - 1 : null,
+      nextPage: pageNum < totalPages ? pageNum + 1 : null,
+      page: pageNum,
+      hasPrevPage: pageNum > 1,
+      hasNextPage: pageNum < totalPages,
+      prevLink: pageNum > 1 ? `/api/products?limit=${limit}&page=${pageNum - 1}&sort=${sort}&query=${query}` : null,
+      nextLink: pageNum < totalPages ? `/api/products?limit=${limit}&page=${pageNum + 1}&sort=${sort}&query=${query}` : null
+    });
+  } catch (error) {
+    res.status(500).json({ status: "error", message: error.message });
+  }
+};
+
+// Obtener un producto por su ID y renderizar la vista de detalles
+const getProductById = async (req, res) => {
+    const { pid } = req.params;
+    try {
+        const product = await Product.findById(pid);
         if (!product) {
-            return res.status(404).json({ error: 'Product not found' });
+            return res.status(404).send('Producto no encontrado');
         }
-        res.json(product);
-    });
-};
-
-// Agregar un nuevo producto
-const addProduct = (req, res) => {
-    const { title, description, code, price, status = true, stock, category, thumbnails } = req.body;
-
-    if (!title || !description || !code || !price || !stock || !category) {
-        return res.status(400).json({ error: 'Missing required fields' });
+        res.render('productDetails', { product: product.toObject() });
+    } catch (error) {
+        console.error('Error al obtener el producto:', error);
+        res.status(500).send('Error al cargar el producto');
     }
-
-    fs.readFile(productsFilePath, 'utf-8', (err, data) => {
-        if (err) {
-            return res.status(500).json({ error: 'Failed to read products file' });
-        }
-        let products = JSON.parse(data);
-        const newProduct = {
-            id: products.length > 0 ? products[products.length - 1].id + 1 : 1,
-            title,
-            description,
-            code,
-            price,
-            status,
-            stock,
-            category,
-            thumbnails: thumbnails || []
-        };
-        products.push(newProduct);
-
-        fs.writeFile(productsFilePath, JSON.stringify(products, null, 2), (err) => {
-            if (err) {
-                return res.status(500).json({ error: 'Failed to save product' });
-            }
-            res.status(201).json(newProduct);
-        });
-    });
+};
+// Agregar un nuevo producto
+const addProduct = async (req, res) => {
+  try {
+    const newProduct = new Product(req.body);
+    await newProduct.save();
+    res.status(201).json(newProduct);
+  } catch (error) {
+    res.status(500).json({ error: 'Error al guardar el producto' });
+  }
 };
 
 // Actualizar un producto existente
-const updateProduct = (req, res) => {
-    const { pid } = req.params;
-
-    fs.readFile(productsFilePath, 'utf-8', (err, data) => {
-        if (err) {
-            return res.status(500).json({ error: 'Failed to read products file' });
-        }
-        let products = JSON.parse(data);
-        const productIndex = products.findIndex(p => p.id === parseInt(pid));
-
-        if (productIndex === -1) {
-            return res.status(404).json({ error: 'Product not found' });
-        }
-
-        const updatedProduct = { ...products[productIndex], ...req.body };
-        if (req.body.id) {
-            return res.status(400).json({ error: 'Cannot update product ID' });
-        }
-
-        products[productIndex] = updatedProduct;
-
-        fs.writeFile(productsFilePath, JSON.stringify(products, null, 2), (err) => {
-            if (err) {
-                return res.status(500).json({ error: 'Failed to update product' });
-            }
-            res.json(updatedProduct);
-        });
-    });
+const updateProduct = async (req, res) => {
+  try {
+    const updatedProduct = await Product.findByIdAndUpdate(req.params.pid, req.body, { new: true });
+    if (!updatedProduct) {
+      return res.status(404).json({ error: 'Producto no encontrado' });
+    }
+    res.json(updatedProduct);
+  } catch (error) {
+    res.status(500).json({ error: 'Error al actualizar el producto' });
+  }
 };
 
 // Eliminar un producto
-const deleteProduct = (req, res) => {
-    const { pid } = req.params;
+const deleteProduct = async (req, res) => {
+  try {
+    const deletedProduct = await Product.findByIdAndDelete(req.params.pid);
+    if (!deletedProduct) {
+      return res.status(404).json({ error: 'Producto no encontrado' });
+    }
+    res.status(204).send();
+  } catch (error) {
+    res.status(500).json({ error: 'Error al eliminar el producto' });
+  }
+};
 
-    fs.readFile(productsFilePath, 'utf-8', (err, data) => {
-        if (err) {
-            return res.status(500).json({ error: 'Failed to read products file' });
-        }
-        let products = JSON.parse(data);
-        const productIndex = products.findIndex(p => p.id === parseInt(pid));
+// Generar 20 productos de prueba
+const generateTestProducts = async (req, res) => {
+  try {
+    const testProducts = Array.from({ length: 20 }, (_, i) => ({
+      title: `Producto ${i + 1}`,
+      description: `Descripción del Producto ${i + 1}`,
+      code: `CODE${i + 1}`,
+      price: Math.floor(Math.random() * 1000) + 1,
+      status: true,
+      stock: Math.floor(Math.random() * 100) + 1,
+      category: `Categoría ${['A', 'B', 'C'][i % 3]}`,
+      thumbnails: []
+    }));
 
-        if (productIndex === -1) {
-            return res.status(404).json({ error: 'Product not found' });
-        }
+    await Product.insertMany(testProducts);
+    res.json({ message: "200 productos de prueba generados exitosamente" });
+  } catch (error) {
+    res.status(500).json({ error: 'Error al generar productos de prueba' });
+  }
+};
 
-        products.splice(productIndex, 1);
-
-        fs.writeFile(productsFilePath, JSON.stringify(products, null, 2), (err) => {
-            if (err) {
-                return res.status(500).json({ error: 'Failed to delete product' });
-            }
-            res.status(204).send();
-        });
-    });
+const deleteAllProducts = async (req, res) => {
+  try {
+    await Product.deleteMany({});
+    res.json({ message: "Todos los productos fueron eliminados exitosamente" });
+  } catch (error) {
+    res.status(500).json({ error: "Error al eliminar todos los productos" });
+  }
 };
 
 module.exports = {
@@ -128,5 +128,7 @@ module.exports = {
     getProductById,
     addProduct,
     updateProduct,
-    deleteProduct
+    deleteProduct,
+    generateTestProducts,
+    deleteAllProducts
 };
